@@ -1,0 +1,57 @@
+# 云效 Flow 流水线 YAML（示例模板）
+# 参考文档：https://help.aliyun.com/zh/yunxiao/user-guide/yaml-preliminary-experience/
+# 目的：从 GitHub 拉取 main 分支的静态站点，上传到 OSS 指定 bucket/prefix。
+# 安全默认：不启用自动触发，先在云效界面手动运行并审批。
+
+name: thai-site-deploy
+
+sources:
+  github_repo:
+    type: github
+    name: GitHub 源码
+    endpoint: https://github.com/bunnyeradream-ops/ziyuan.git
+    branch: main
+    # 如需 push 自动触发，解除注释：
+    # triggerEvents:
+    #   - push
+    certificate:
+      type: serviceConnection
+      # 在云效“服务连接”中创建 GitHub 连接后，替换为实际 ID
+      serviceConnection: <your-github-service-connection-id>
+
+stages:
+  deploy_stage:
+    name: 部署到 OSS
+    jobs:
+      deploy_job:
+        name: 上传静态文件
+        runsOn: public/cn-hangzhou
+        steps:
+          install_ossutil:
+            step: Command
+            name: 安装 ossutil
+            with:
+              run: |
+                curl -L -o /tmp/ossutil64 https://gosspublic.alicdn.com/ossutil/ossutil64
+                chmod +x /tmp/ossutil64
+
+          upload_to_oss:
+            step: Command
+            name: 同步文件到 OSS
+            with:
+              env:
+                # 替换为你的实际 OSS endpoint，例如：https://oss-cn-hangzhou.aliyuncs.com
+                OSS_ENDPOINT: <your-oss-endpoint>
+                # 替换为你的 bucket 名称
+                OSS_BUCKET: <your-bucket>
+                # 可选：对象前缀，例如 site/
+                OSS_PREFIX: <your-prefix>
+                # 通过云效“项目机密变量”或“服务连接”注入，不要写到代码里
+                OSS_ACCESS_KEY_ID: ${{ OSS_ACCESS_KEY_ID }}
+                OSS_ACCESS_KEY_SECRET: ${{ OSS_ACCESS_KEY_SECRET }}
+              run: |
+                export OSS_ACCESS_KEY_ID="${OSS_ACCESS_KEY_ID}"
+                export OSS_ACCESS_KEY_SECRET="${OSS_ACCESS_KEY_SECRET}"
+                /tmp/ossutil64 config -e ${OSS_ENDPOINT} -i ${OSS_ACCESS_KEY_ID} -k ${OSS_ACCESS_KEY_SECRET}
+                /tmp/ossutil64 cp -rf ${github_repo}/index.html oss://${OSS_BUCKET}/${OSS_PREFIX}
+                /tmp/ossutil64 cp -rf ${github_repo}/assets/ oss://${OSS_BUCKET}/${OSS_PREFIX}assets/
