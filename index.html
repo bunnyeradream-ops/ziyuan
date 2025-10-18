@@ -18,7 +18,56 @@
         <a class="btn" href="https://github.com/bunnyeradream-ops/ziyuan" target="_blank" rel="noopener">查看仓库</a>
       </div>
       <p class="note">Coming Soon · 云效流水线配置与部署完成后，这里将展示正式站点。</p>
+      <hr class="divider" />
+      <h2>库存看板</h2>
+      <p class="desc">当前为本地演示数据。云端部署后将接入受控数据源。</p>
+      <div class="inv-summary">可售合计：<span id="inv-total">-</span></div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>SKU</th>
+              <th>名称</th>
+              <th>仓位</th>
+              <th>总数量</th>
+              <th>已占用</th>
+              <th>可售</th>
+            </tr>
+          </thead>
+          <tbody id="inv-body"></tbody>
+        </table>
+      </div>
+      <div id="inv-error" class="error"></div>
     </section>
   </main>
+  <script>
+    (function(){
+      fetch('/data/inventory.json')
+        .then(function(r){ return r.json(); })
+        .then(function(data){
+          var tbody = document.getElementById('inv-body');
+          var totalEl = document.getElementById('inv-total');
+          var sumAvail = 0;
+          (data.items || []).forEach(function(it){
+            var avail = (it.qty || 0) - (it.reserved || 0);
+            sumAvail += avail;
+            var tr = document.createElement('tr');
+            tr.innerHTML = '<td>' + (it.sku || '-') + '</td>' +
+                           '<td>' + (it.name || '-') + '</td>' +
+                           '<td>' + (it.location || '-') + '</td>' +
+                           '<td>' + (it.qty || 0) + '</td>' +
+                           '<td>' + (it.reserved || 0) + '</td>' +
+                           '<td>' + avail + '</td>';
+            tbody.appendChild(tr);
+          });
+          if (totalEl) totalEl.textContent = sumAvail;
+        })
+        .catch(function(err){
+          var errEl = document.getElementById('inv-error');
+          if (errEl) errEl.textContent = '数据未配置或加载失败';
+          console.error('inventory load error', err);
+        });
+    })();
+  </script>
 </body>
 </html>

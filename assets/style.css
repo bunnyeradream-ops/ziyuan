@@ -41,3 +41,10 @@ h1 {
   text-decoration: none;
 }
 .btn:hover { background: #1d4ed8; }
+.divider { border: none; border-top: 1px solid #e5e7eb; margin: 16px 0; }
+.table-wrap { overflow-x: auto; margin-top: 12px; }
+.table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.table th, .table td { border-bottom: 1px solid #e5e7eb; padding: 8px 10px; text-align: left; }
+.table th { background: #f9fafb; color: #374151; }
+.inv-summary { margin-top: 8px; font-weight: 600; }
+.error { color: #b91c1c; font-size: 13px; margin-top: 8px; }
