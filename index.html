@@ -12,6 +12,7 @@
 <body>
   <main class="container">
     <section class="card">
+      <div class="brand"><span class="logo">BunnyEra</span></div>
       <h1>泰国独立站</h1>
       <p class="desc">项目已完成仓库隔离与初始化，正在接入云效部署。</p>
       <div class="actions">
@@ -38,29 +39,52 @@
         </table>
       </div>
       <div id="inv-error" class="error"></div>
+
+      <h3 class="chart-title">库存图表（按 SKU 可售）</h3>
+      <div id="chart" class="chart"></div>
     </section>
   </main>
   <script>
     (function(){
-      fetch('/data/inventory.json')
+      var params = new URLSearchParams(location.search);
+      var dataUrl = params.get('data') || '/data/inventory.json';
+      fetch(dataUrl)
         .then(function(r){ return r.json(); })
         .then(function(data){
           var tbody = document.getElementById('inv-body');
           var totalEl = document.getElementById('inv-total');
+          var chart = document.getElementById('chart');
           var sumAvail = 0;
-          (data.items || []).forEach(function(it){
+          var maxAvail = 0;
+          var rows = (data.items || []).map(function(it){
             var avail = (it.qty || 0) - (it.reserved || 0);
             sumAvail += avail;
+            if (avail > maxAvail) maxAvail = avail;
+            return { sku: it.sku || '-', name: it.name || '-', location: it.location || '-', qty: it.qty || 0, reserved: it.reserved || 0, avail: avail };
+          });
+          rows.forEach(function(row){
             var tr = document.createElement('tr');
-            tr.innerHTML = '<td>' + (it.sku || '-') + '</td>' +
-                           '<td>' + (it.name || '-') + '</td>' +
-                           '<td>' + (it.location || '-') + '</td>' +
-                           '<td>' + (it.qty || 0) + '</td>' +
-                           '<td>' + (it.reserved || 0) + '</td>' +
-                           '<td>' + avail + '</td>';
+            tr.innerHTML = '<td>' + row.sku + '</td>' +
+                           '<td>' + row.name + '</td>' +
+                           '<td>' + row.location + '</td>' +
+                           '<td>' + row.qty + '</td>' +
+                           '<td>' + row.reserved + '</td>' +
+                           '<td>' + row.avail + '</td>';
             tbody.appendChild(tr);
           });
           if (totalEl) totalEl.textContent = sumAvail;
+          // 渲染柱状图
+          if (chart && maxAvail > 0) {
+            rows.forEach(function(row){
+              var bar = document.createElement('div');
+              bar.className = 'bar';
+              var percent = Math.round((row.avail / maxAvail) * 100);
+              bar.innerHTML = '<div class="label">' + row.sku + '</div>' +
+                              '<div class="meter"><div class="fill" style="width:' + percent + '%"></div></div>' +
+                              '<div class="value">' + row.avail + '</div>';
+              chart.appendChild(bar);
+            });
+          }
         })
         .catch(function(err){
           var errEl = document.getElementById('inv-error');

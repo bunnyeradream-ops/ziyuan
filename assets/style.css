@@ -27,6 +27,8 @@ h1 {
   margin: 0 0 12px;
   font-size: 32px;
 }
+.brand { display:flex; justify-content:flex-start; align-items:center; margin-bottom:8px; }
+.logo { font-weight: 700; letter-spacing: 0.5px; font-size: 18px; background: linear-gradient(90deg,#0ea5e9,#8b5cf6); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .desc { color: #374151; margin: 0 0 20px; }
 .note { color: #6b7280; font-size: 14px; }
 .actions { display: flex; gap: 12px; margin: 16px 0 0; }
@@ -48,3 +50,10 @@ h1 {
 .table th { background: #f9fafb; color: #374151; }
 .inv-summary { margin-top: 8px; font-weight: 600; }
 .error { color: #b91c1c; font-size: 13px; margin-top: 8px; }
+.chart-title { margin-top: 16px; font-size: 16px; color: #374151; }
+.chart { margin-top: 8px; display: grid; gap: 8px; }
+.bar { display: grid; grid-template-columns: 120px 1fr 60px; align-items: center; gap: 10px; }
+.bar .label { color: #374151; font-size: 14px; }
+.bar .meter { height: 12px; background: #e5e7eb; border-radius: 999px; overflow: hidden; }
+.bar .fill { height: 100%; background: linear-gradient(90deg,#22c55e,#16a34a); }
+.bar .value { text-align: right; color: #111827; font-size: 12px; }

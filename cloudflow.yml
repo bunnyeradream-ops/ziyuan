@@ -55,3 +55,4 @@ stages:
                 /tmp/ossutil64 config -e ${OSS_ENDPOINT} -i ${OSS_ACCESS_KEY_ID} -k ${OSS_ACCESS_KEY_SECRET}
                 /tmp/ossutil64 cp -rf ${github_repo}/index.html oss://${OSS_BUCKET}/${OSS_PREFIX}
                 /tmp/ossutil64 cp -rf ${github_repo}/assets/ oss://${OSS_BUCKET}/${OSS_PREFIX}assets/
+                /tmp/ossutil64 cp -rf ${github_repo}/data/   oss://${OSS_BUCKET}/${OSS_PREFIX}data/
