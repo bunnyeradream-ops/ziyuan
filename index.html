@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="th">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>泰国独立站 · Coming Soon</title>
+  <title>BunnyEra ร้านค้าไทย · เร็วๆ นี้</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
@@ -12,27 +12,31 @@
 <body>
   <main class="container">
     <section class="card">
-      <div class="brand"><span class="logo">BunnyEra</span></div>
-      <h1>泰国独立站</h1>
-      <p class="desc">项目已完成仓库隔离与初始化，正在接入云效部署。</p>
-      <div class="actions">
-        <a class="btn" href="https://github.com/bunnyeradream-ops/ziyuan" target="_blank" rel="noopener">查看仓库</a>
+      <div class="brand">
+        <span class="logo">BunnyEra</span>
+        <div id="lang-switch" class="lang"><a class="link-zh" href="#">中文</a> | <a class="link-th" href="#">ไทย</a></div>
       </div>
-      <p class="note">Coming Soon · 云效流水线配置与部署完成后，这里将展示正式站点。</p>
+      <h1 id="heading">ร้าน BunnyEra ประเทศไทย</h1>
+      <p class="desc" id="desc1">ตั้งค่าโปรเจกต์เรียบร้อย กำลังเชื่อมต่อการดีพลอยด้วย Yunxiao</p>
+      <div class="actions">
+        <a id="btnRepo" class="btn" href="https://github.com/bunnyeradream-ops/ziyuan" target="_blank" rel="noopener">ดูคลังโค้ด</a>
+        <a id="btnShop" class="btn secondary" href="#" target="_blank" rel="noopener" style="display:none">ไปยังร้านค้า</a>
+      </div>
+      <p class="note" id="note">Coming Soon · เมื่อดีพลอยเสร็จ หน้านี้จะแสดงเว็บไซต์จริง</p>
       <hr class="divider" />
-      <h2>库存看板</h2>
-      <p class="desc">当前为本地演示数据。云端部署后将接入受控数据源。</p>
-      <div class="inv-summary">可售合计：<span id="inv-total">-</span></div>
+      <h2 id="invBoard">แดชบอร์ดสต็อก</h2>
+      <p class="desc" id="desc2">ตอนนี้ใช้ข้อมูลตัวอย่างในเครื่อง เมื่อขึ้นระบบจะเชื่อมแหล่งข้อมูลที่ควบคุมได้</p>
+      <div class="inv-summary"><span id="inv-summary-label" class="label">พร้อมขายรวม：</span><span id="inv-total">-</span></div>
       <div class="table-wrap">
         <table class="table">
           <thead>
             <tr>
               <th>SKU</th>
-              <th>名称</th>
-              <th>仓位</th>
-              <th>总数量</th>
-              <th>已占用</th>
-              <th>可售</th>
+              <th>ชื่อสินค้า</th>
+              <th>ตำแหน่ง</th>
+              <th>จำนวนทั้งหมด</th>
+              <th>ถูกจอง</th>
+              <th>พร้อมขาย</th>
             </tr>
           </thead>
           <tbody id="inv-body"></tbody>
@@ -40,11 +44,88 @@
       </div>
       <div id="inv-error" class="error"></div>
 
-      <h3 class="chart-title">库存图表（按 SKU 可售）</h3>
+      <h3 id="chartTitle" class="chart-title">กราฟสต็อก (พร้อมขายตาม SKU)</h3>
       <div id="chart" class="chart"></div>
     </section>
   </main>
   <script>
+    // i18n & language switch
+    (function(){
+      var params = new URLSearchParams(location.search);
+      var lang = params.get('lang') || 'th';
+      var I18N = {
+        th: {
+          title: 'BunnyEra ร้านค้าไทย · เร็วๆ นี้',
+          heading: 'ร้าน BunnyEra ประเทศไทย',
+          desc1: 'ตั้งค่าโปรเจกต์เรียบร้อย กำลังเชื่อมต่อการดีพลอยด้วย Yunxiao',
+          btnRepo: 'ดูคลังโค้ด',
+          btnShop: 'ไปยังร้านค้า',
+          note: 'Coming Soon · เมื่อดีพลอยเสร็จ หน้านี้จะแสดงเว็บไซต์จริง',
+          invBoard: 'แดชบอร์ดสต็อก',
+          desc2: 'ตอนนี้ใช้ข้อมูลตัวอย่างในเครื่อง เมื่อขึ้นระบบจะเชื่อมแหล่งข้อมูลที่ควบคุมได้',
+          invSummary: 'พร้อมขายรวม：',
+          headers: ['SKU','ชื่อสินค้า','ตำแหน่ง','จำนวนทั้งหมด','ถูกจอง','พร้อมขาย'],
+          chartTitle: 'กราฟสต็อก (พร้อมขายตาม SKU)',
+          errLoad: 'โหลดข้อมูลไม่สำเร็จหรือยังไม่ตั้งค่า'
+        },
+        zh: {
+          title: '泰国独立站 · Coming Soon',
+          heading: '泰国独立站',
+          desc1: '项目已完成仓库隔离与初始化，正在接入云效部署。',
+          btnRepo: '查看仓库',
+          btnShop: '进入商店',
+          note: 'Coming Soon · 云效流水线配置与部署完成后，这里将展示正式站点。',
+          invBoard: '库存看板',
+          desc2: '当前为本地演示数据。云端部署后将接入受控数据源。',
+          invSummary: '可售合计：',
+          headers: ['SKU','名称','仓位','总数量','已占用','可售'],
+          chartTitle: '库存图表（按 SKU 可售）',
+          errLoad: '数据未配置或加载失败'
+        }
+      };
+      var t = I18N[lang] || I18N.zh;
+      document.documentElement.setAttribute('lang', lang === 'th' ? 'th' : 'zh-CN');
+      document.title = t.title;
+      function set(sel, text){ var el=document.querySelector(sel); if(el) el.textContent=text; }
+      set('#heading', t.heading);
+      set('#desc1', t.desc1);
+      set('#note', t.note);
+      set('#invBoard', t.invBoard);
+      set('#desc2', t.desc2);
+      set('#inv-summary-label', t.invSummary);
+      set('#btnRepo', t.btnRepo);
+      set('#chartTitle', t.chartTitle);
+      // 表头
+      var ths = document.querySelectorAll('thead th');
+      for (var i=0;i<ths.length && i<t.headers.length;i++){ ths[i].textContent = t.headers[i]; }
+      // 语言切换链接保留其它参数
+      var langEl = document.getElementById('lang-switch');
+      if (langEl) {
+        var base = new URLSearchParams(location.search);
+        base.delete('lang');
+        var qs = base.toString();
+        var suffix = qs ? ('&' + qs) : '';
+        langEl.querySelector('.link-zh').setAttribute('href', '?lang=zh' + suffix);
+        langEl.querySelector('.link-th').setAttribute('href', '?lang=th' + suffix);
+      }
+      window.__I18N__ = t;
+    })();
+  </script>
+  <script>
+    // shop link from URL (?shop=) or /data/config.json
+    (function(){
+      var params = new URLSearchParams(location.search);
+      var shop = params.get('shop');
+      var btn = document.getElementById('btnShop');
+      function apply(u){ if(btn){ if(u){ btn.href=u; btn.style.display='inline-flex'; btn.textContent=(window.__I18N__||{}).btnShop || '进入商店'; } else { btn.style.display='none'; } } }
+      if (shop) { apply(shop); }
+      else {
+        fetch('/data/config.json').then(function(r){ return r.json(); }).then(function(cfg){ apply(cfg.shopUrl); }).catch(function(){ apply(null); });
+      }
+    })();
+  </script>
+  <script>
+    // inventory render
     (function(){
       var params = new URLSearchParams(location.search);
       var dataUrl = params.get('data') || '/data/inventory.json';
@@ -88,7 +169,8 @@
         })
         .catch(function(err){
           var errEl = document.getElementById('inv-error');
-          if (errEl) errEl.textContent = '数据未配置或加载失败';
+          var t = (window.__I18N__||{});
+          if (errEl) errEl.textContent = t.errLoad || '数据未配置或加载失败';
           console.error('inventory load error', err);
         });
     })();
