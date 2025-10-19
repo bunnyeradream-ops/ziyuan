@@ -1,0 +1,30 @@
+/* BunnyEra Thai Theme */
+:root{
+  --brand-primary:#7c3aed; /* 紫丁香 */
+  --brand-accent:#22c55e; /* 绿色强调 */
+  --brand-dark:#111827;
+  --brand-muted:#6b7280;
+  --bg:#f8fafc;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--brand-dark);font-family:Inter, 'Noto Sans Thai', 'Prompt', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Microsoft YaHei", "Noto Sans", sans-serif}
+.container{max-width:1080px;margin:0 auto;padding:24px}
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;align-items:center;margin:20px 0}
+.hero .title{font-size:40px;line-height:1.1;margin:0 0 12px}
+.hero .subtitle{color:var(--brand-muted)}
+.hero .card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:20px;box-shadow:0 10px 24px rgba(0,0,0,.08)}
+.brand{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.logo{font-weight:800;letter-spacing:.5px;font-size:20px;background:linear-gradient(90deg,#0ea5e9,#8b5cf6);-webkit-background-clip:text;background-clip:text;color:transparent}
+.actions{display:flex;gap:12px;margin-top:16px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:12px;text-decoration:none;color:#fff;background:var(--brand-primary)}
+.btn:hover{filter:brightness(.95)}
+.btn.secondary{background:var(--brand-muted)}
+.sections{margin-top:24px;display:grid;gap:16px}
+.section{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:18px}
+.section h3{margin:0 0 10px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.card{border:1px solid #e5e7eb;border-radius:12px;padding:12px;background:#fff}
+.price{color:var(--brand-primary);font-weight:700}
+.badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#eef2ff;color:#4f46e5;font-size:12px}
+.footer{margin:30px 0;color:var(--brand-muted);text-align:center}
+.banner{height:220px;border-radius:16px;background:radial-gradient(600px 240px at 10% 10%,#e0f2fe 0%,transparent 60%),radial-gradient(600px 240px at 90% 90%,#fef3c7 0%,transparent 60%),#fff;border:1px solid #e5e7eb}
